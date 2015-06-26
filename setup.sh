@@ -3,16 +3,6 @@
 # This setup.sh script installs necessary dependencies for 'Unified IoT Dashboard' Framework
 # to be worked properly on this machine.
 
-arch=$(uname -m)
-
 # Setup for Alljoyn
-if [ $arch == 'i686' -o $arch == 'armv6l' ]; then
-	sudo apt-get update
-	sudo apt-get install build-essential -y
-	sudo apt-get install gcc g++ libssl-dev -y
-	sudo apt-get install python scons curl -y
-
-#	if [ $arch == 'armv61' -a -f /usr/bin/arm-linux-gnueabihf-* ]; then
-#		
-#	fi
-fi
+sudo apt-get update
+sudo apt-get install build-essential gcc g++ libssl-dev python scons curl apache2 php5 libapache2-mod-php5 -y
