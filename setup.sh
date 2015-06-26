@@ -7,8 +7,8 @@
 sudo apt-get update
 sudo apt-get install build-essential gcc g++ libssl-dev python scons curl apache2 php5 libapache2-mod-php5 -y
 
-# Logs for Alljoyn services
-mkdir components/logs/alljoyn
+# Logs for alljoyn component services
+mkdir -p components/logs/alljoyn
 
 # Assuming apache2 home directory set to '/var/www' or '/var/www/html'
 if [ -d '/var/www/html' ]; then
