@@ -11,4 +11,8 @@ if [ $arch == 'i686' -o $arch == 'armv6l' ]; then
 	sudo apt-get install build-essential -y
 	sudo apt-get install gcc g++ libssl-dev -y
 	sudo apt-get install python scons curl -y
+
+#	if [ $arch == 'armv61' -a -f /usr/bin/arm-linux-gnueabihf-* ]; then
+#		
+#	fi
 fi
