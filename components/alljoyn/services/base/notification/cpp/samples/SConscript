@@ -30,9 +30,7 @@ cobjs = samples_env.SConscript('common/SConscript', {'env': samples_env})
 
 sample_dirs = [
     'ConsumerService',
-    'ProducerBasic',
     'ProducerService',
-    'TestService'
     ]
 
 
