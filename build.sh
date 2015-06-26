@@ -19,18 +19,29 @@ elif [ $TARGET_CPU == 'arm' ]; then
 	scons WS=off BINDINGS=cpp CPU=arm OE_BASE=/usr SERVICES="about,notification"
 fi
 
-printf "Checking Alljoyn About Service . . . "
+printf "\nChecking Alljoyn About Service . . .			"
 if [ -f $path/components/alljoyn/core/alljoyn/build/linux/$TARGET_CPU/debug/dist/about/bin/AboutClient ]; then
 	printf "Build successful.!\n"
 else
 	printf "\nSomething went wrong.!\n"
+	exit
 fi
 
-printf "Checking Alljoyn notification Service . . . "
-if [ -f $path/components/alljoyn/core/alljoyn/build/linux/$TARGET_CPU/debug/dist/notification/bin/ConsumerService ] && [ -f $path/components/alljoyn/core/alljoyn/build/linux/$TARGET_CPU/debug/dist/notification/bin/ProducerService ]; then
+printf "Checking Alljoyn notification Consumer Service . . .	"
+if [ -f $path/components/alljoyn/core/alljoyn/build/linux/$TARGET_CPU/debug/dist/notification/bin/ConsumerService ]; then
 	printf "Build successful.!\n"
 else
 	printf "\nSomething went wrong.!\n"
+	exit
+fi
+
+printf "Checking Alljoyn notification Producer Service . . .	"
+if [ -f $path/components/alljoyn/core/alljoyn/build/linux/$TARGET_CPU/debug/dist/notification/bin/ProducerService ]; then
+	printf "Build successful.!\n\n"
+else
+	printf "\nSomething went wrong.!\n"
+	exit
 fi
 
 cd $path
+printf "Alljoyn component services build successfully Done.!\n"
