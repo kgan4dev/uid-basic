@@ -5,7 +5,7 @@ path=`pwd`
 arch=$(uname -m)
 
 if [ -z "$arg" ]; then
-	printf "USAGE: ./run.sh {start/stop/restart}\n"
+	printf "USAGE: ./run.sh {start/stop/status/restart}\n"
 	exit
 fi
 
@@ -85,18 +85,42 @@ elif [ $arg == 'stop' ]; then
 	printf "Stoping Alljoyn component services . . . \n"	
 
 	printf "\nAbout Client service\n"
-	printf "Service stopping. . .			"
-	kill -9 $(ps | grep "AboutClient" | awk '{print $1}')
-	printf "Done\n"
+	if [ -z $(ps | grep "AboutClient" | awk '{print $1}') ];then
+		printf "Service found not running . . .\n"
+	else
+		printf "Service stopping. . .			"
+		kill -9 $(ps | grep "AboutClient" | awk '{print $1}')
+		printf "Done\n"
+	fi
 
 	printf "\nNotification Consumer Service\n"
-	printf "Service stopping. . .			"
-	kill -9 $(ps | grep "ConsumerService" | awk '{print $1}')
-	printf "Done\n"
+	if [ -z $(ps | grep "ConsumerService" | awk '{print $1}') ];then
+		printf "Service found not running . . .\n"
+	else
+		printf "Service stopping. . .			"
+		kill -9 $(ps | grep "ConsumerService" | awk '{print $1}')
+		printf "Done\n"
+	fi
 #	printf "Notification Producer Service. . . 	"
 #	kill -9 $(ps | grep "ProducerService" | awk '{print $1}')
 #	printf "Done\n\n"
 	printf "\nAlljoyn component services stop successfully.!\n"
+elif [ $arg == "status" ];then
+	        printf "\nAbout Client service\n"
+        if [ -z $(ps | grep "AboutClient" | awk '{print $1}') ];then
+                printf "Service found not running . . .\n"
+        else
+                printf "Service is running . . .\n"
+        fi
+
+        printf "\nNotification Consumer Service\n"
+        if [ -z $(ps | grep "ConsumerService" | awk '{print $1}') ];then
+                printf "Service found not running . . .\n"
+        else
+                printf "Service is running . . .\n"
+        fi
+
+	printf "\n"
 else
-	printf "USAGE: ./run.sh {start/stopi/restart}\n"
+	printf "USAGE: ./run.sh {start/stop/status/restart}\n"
 fi
