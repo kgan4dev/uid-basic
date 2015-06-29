@@ -16,6 +16,7 @@ Import('env')
 
 srcs = env.Glob('*.cc')
 objs = env.Object(srcs)
+env.Prepend(LIBS = ['curl','xml2'])
 
 prog = env.Program('AboutClient', objs)
 

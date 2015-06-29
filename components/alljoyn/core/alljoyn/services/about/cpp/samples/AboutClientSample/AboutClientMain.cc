@@ -25,6 +25,9 @@
 #include "AboutClientSessionListener.h"
 #include "AboutClientAnnounceHandler.h"
 #include "AboutClientSessionJoiner.h"
+#include "UIDPlugin.h"
+#include <sstream>
+#include <string.h>
 
 using namespace ajn;
 using namespace services;
@@ -130,6 +133,14 @@ void ViewAboutServiceData(qcc::String const& busName, SessionId id) {
             }
         }
 
+	xmlDocPtr AJDoc;
+	xmlNodePtr AJRootNode;
+	xmlChar *AJData;
+
+	AJDoc = xmlNewDoc(BAD_CAST "1.0");
+	AJRootNode = xmlNewNode(NULL,BAD_CAST "AJDevice");
+	xmlDocSetRootElement(AJDoc, AJRootNode);
+
         for (std::vector<qcc::String>::iterator it = supportedLanguages.begin(); it != supportedLanguages.end(); ++it) {
             std::cout << std::endl << busName.c_str() << " AboutClient AboutData using language=" << it->c_str() << std::endl;
             std::cout << "-----------------------------------" << std::endl;
@@ -143,31 +154,57 @@ void ViewAboutServiceData(qcc::String const& busName, SessionId id) {
                     if (value.typeId == ALLJOYN_STRING) {
                         std::cout << "Key name = " << std::setfill(' ') << std::setw(20) << std::left << key.c_str()
                                   << " value = " << value.v_string.str << std::endl;
+			if (!strcmp(it->c_str(),"en")) {
+				xmlNewChild(AJRootNode,NULL,BAD_CAST key.c_str(),BAD_CAST value.v_string.str);
+			}
+
                     } else if (value.typeId == ALLJOYN_ARRAY && value.Signature().compare("as") == 0) {
                         std::cout << "Key name = " << std::setfill(' ') << std::setw(20) << std::left << key.c_str() << " values: ";
                         const MsgArg* stringArray;
                         size_t fieldListNumElements;
+			std::stringstream AJLang;
+
                         status = value.Get("as", &fieldListNumElements, &stringArray);
                         for (unsigned int i = 0; i < fieldListNumElements; i++) {
                             char* tempString;
                             stringArray[i].Get("s", &tempString);
                             std::cout << tempString << " ";
+			    AJLang << tempString << " ";
                         }
                         std::cout << std::endl;
+
+			if (!strcmp(it->c_str(),"en")) {
+                                xmlNewChild(AJRootNode,NULL,BAD_CAST key.c_str(),BAD_CAST AJLang.str().c_str());
+                        }
+
                     } else if (value.typeId == ALLJOYN_BYTE_ARRAY) {
                         std::cout << "Key name = " << std::setfill(' ') << std::setw(20) << std::left << key.c_str()
                                   << " value = " << std::hex << std::uppercase << std::setfill('0');
                         uint8_t* AppIdBuffer;
                         size_t numElements;
+			std::stringstream AJIds;
                         value.Get("ay", &numElements, &AppIdBuffer);
                         for (size_t i = 0; i < numElements; i++) {
                             std::cout <<  std::setw(2) << (unsigned int)AppIdBuffer[i];
+			    AJIds << (unsigned int)AppIdBuffer[i];
                         }
                         std::cout << std::nouppercase << std::dec << std::endl;
+			AJIds << std::nouppercase << std::dec;
+			if (!strcmp(it->c_str(),"en")) {
+                                xmlNewChild(AJRootNode,NULL,BAD_CAST key.c_str(),BAD_CAST AJIds.str().c_str());
+                        }
                     }
                 }                                     // end of for
             }
         }
+
+	xmlDocDumpMemory(AJDoc,&AJData,NULL);
+	xmlFreeDoc(AJDoc);
+
+	UIDUtils *httpHandler = new UIDUtils();
+	httpHandler->http_post("http://127.0.0.1/uid-basic/controller/rest_handler.php?newAJDevice",(char *)AJData);
+	sleep(2);
+	delete httpHandler;
 
         std::cout << std::endl << busName.c_str() << " AboutClient GetVersion" << std::endl;
         std::cout << "-----------------------------------" << std::endl;
