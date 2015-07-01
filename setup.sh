@@ -5,7 +5,7 @@
 
 # Setup for Alljoyn
 sudo apt-get update
-sudo apt-get install build-essential gcc g++ libssl-dev python scons curl apache2 php5 libapache2-mod-php5 libxml2 -y
+sudo apt-get install build-essential gcc g++ libssl-dev python scons curl apache2 php5 mysql-server libapache2-mod-php5 libxml2 -y
 
 # Logs for alljoyn component services
 mkdir -p components/logs/alljoyn

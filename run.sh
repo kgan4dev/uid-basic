@@ -106,7 +106,7 @@ elif [ $arg == 'stop' ]; then
 #	printf "Done\n\n"
 	printf "\nAlljoyn component services stop successfully.!\n"
 elif [ $arg == "status" ];then
-	        printf "\nAbout Client service\n"
+        printf "\nAbout Client service\n"
         if [ -z $(ps | grep "AboutClient" | awk '{print $1}') ];then
                 printf "Service found not running . . .\n"
         else
