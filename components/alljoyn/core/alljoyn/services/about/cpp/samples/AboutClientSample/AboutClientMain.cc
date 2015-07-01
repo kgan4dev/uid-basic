@@ -33,6 +33,7 @@ using namespace ajn;
 using namespace services;
 
 static BusAttachment* busAttachment;
+UIDUtils *httpHandler;
 
 static volatile sig_atomic_t s_interrupt = false;
 
@@ -198,13 +199,14 @@ void ViewAboutServiceData(qcc::String const& busName, SessionId id) {
             }
         }
 
+	xmlNewChild(AJRootNode,NULL,BAD_CAST "BusName",BAD_CAST busName.c_str());
+	xmlNewChild(AJRootNode,NULL,BAD_CAST "Status",BAD_CAST "Active");
+
 	xmlDocDumpMemory(AJDoc,&AJData,NULL);
 	xmlFreeDoc(AJDoc);
 
-	UIDUtils *httpHandler = new UIDUtils();
-	httpHandler->http_post("http://127.0.0.1/uid-basic/controller/rest_handler.php?newAJDevice",(char *)AJData);
+	httpHandler->http_post("http://127.0.0.1/uid-basic/controller/core/device_registration.php",(char *)AJData);
 	sleep(2);
-	delete httpHandler;
 
         std::cout << std::endl << busName.c_str() << " AboutClient GetVersion" << std::endl;
         std::cout << "-----------------------------------" << std::endl;
@@ -406,6 +408,7 @@ void WaitForSigInt(void)
 #else
         usleep(10 * 1000);
 #endif
+
         while ((!s_joinedSessions.empty()) && s_interrupt == false) {
             /*
              * for each session joined display all of the data associated with the
@@ -417,6 +420,23 @@ void WaitForSigInt(void)
             std::cout << "Leaving session id = " << s_joinedSessions.front().id << " with " << s_joinedSessions.front().busName.c_str() << " status: " << QCC_StatusText(status) << std::endl;
             s_joinedSessions.pop_front();
         }
+
+        std::string uid_bus;
+	uid_bus = httpHandler->http_get("http://127.0.0.1/uid-basic/controller/core/monitor_device_status.php");
+
+//	std::cout << "Received BusName - " << uid_bus << std::endl;
+
+	sleep(1);
+
+	if ( busAttachment->Ping(uid_bus.c_str(),1000) == ER_OK ) {
+		/* Success status goes here*/
+		httpHandler->http_post("http://127.0.0.1/uid-basic/controller/core/monitor_device_status.php","Status=Active");
+	} else {
+		/* Failure status goes here*/
+		httpHandler->http_post("http://127.0.0.1/uid-basic/controller/core/monitor_device_status.php","Status=Inactive");
+	}
+
+	sleep(1);
     }
 }
 
@@ -446,6 +466,8 @@ int main(int argc, char**argv, char**envArg)
 
     // Install SIGINT handler
     signal(SIGINT, SigIntHandler);
+
+    httpHandler = new UIDUtils();
 
     busAttachment = new BusAttachment("AboutClientMain", true);
 
@@ -482,6 +504,7 @@ int main(int argc, char**argv, char**envArg)
     busAttachment->Stop();
     busAttachment->Join();
     delete busAttachment;
+    delete httpHandler;
 
     return 0;
 

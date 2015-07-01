@@ -38,17 +38,9 @@ switch ($method) {
 			die("Connection failed: " . $conn->connect_error);
 		}
 
-		if ($conn->query("CREATE DATABASE IF NOT EXISTS UIDTest") === TRUE) {
-			echo "DATABASE CREATED/UPDATED\n";
-		} else echo "DB OK";
-
-		if ($conn->query("use UIDTest") === TRUE) {
-                        echo "DATABASE CHANGED\n";
-                }
-
-                if ($conn->query($createTable) === TRUE) {
-                        echo "TABLE CREATED/UPDATED\n";
-                }
+		$conn->query("CREATE DATABASE IF NOT EXISTS UIDTest");
+		$conn->query("use UIDTest");
+                $conn->query($createTable);
 			
                 $resp =  $conn->query("SELECT * FROM UIDTestTable WHERE DeviceName='My device name'");
 
