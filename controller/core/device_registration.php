@@ -42,6 +42,8 @@ switch ($method) {
 		$conn->query("use UIDTest");
                 $conn->query($createTable);
 			
+//		$conn->query($insertValues);
+
                 $resp =  $conn->query("SELECT * FROM UIDTestTable WHERE DeviceName='My device name'");
 
                 $row = mysqli_fetch_assoc($resp);

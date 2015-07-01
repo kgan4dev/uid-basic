@@ -402,6 +402,8 @@ void announceHandlerCallback(qcc::String const& busName, unsigned short port)
 void WaitForSigInt(void)
 {
     QStatus status;
+    std::string DbStatus = "empty";
+
     while (s_interrupt == false) {
 #ifdef _WIN32
         Sleep(10);
@@ -419,24 +421,28 @@ void WaitForSigInt(void)
             status = busAttachment->LeaveSession(s_joinedSessions.front().id);
             std::cout << "Leaving session id = " << s_joinedSessions.front().id << " with " << s_joinedSessions.front().busName.c_str() << " status: " << QCC_StatusText(status) << std::endl;
             s_joinedSessions.pop_front();
+
+	    DbStatus = "filled";
         }
 
-        std::string uid_bus;
-	uid_bus = httpHandler->http_get("http://127.0.0.1/uid-basic/controller/core/monitor_device_status.php");
+	if ( !DbStatus.compare("filled") ) {
+	        std::string uid_bus;
+		uid_bus = httpHandler->http_get("http://127.0.0.1/uid-basic/controller/core/monitor_device_status.php");
 
-//	std::cout << "Received BusName - " << uid_bus << std::endl;
+//		std::cout << "Received BusName - " << uid_bus << std::endl;
 
-	sleep(1);
+		sleep(1);
 
-	if ( busAttachment->Ping(uid_bus.c_str(),1000) == ER_OK ) {
-		/* Success status goes here*/
-		httpHandler->http_post("http://127.0.0.1/uid-basic/controller/core/monitor_device_status.php","Status=Active");
-	} else {
-		/* Failure status goes here*/
-		httpHandler->http_post("http://127.0.0.1/uid-basic/controller/core/monitor_device_status.php","Status=Inactive");
+		if ( busAttachment->Ping(uid_bus.c_str(),1000) == ER_OK ) {
+			/* Success status goes here*/
+			httpHandler->http_post("http://127.0.0.1/uid-basic/controller/core/monitor_device_status.php","Status=Active");
+		} else {
+			/* Failure status goes here*/
+			httpHandler->http_post("http://127.0.0.1/uid-basic/controller/core/monitor_device_status.php","Status=Inactive");
+		}
+	
+		sleep(1);
 	}
-
-	sleep(1);
     }
 }
 
