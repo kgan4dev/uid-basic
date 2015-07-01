@@ -30,7 +30,7 @@ switch ($method) {
 
 		$insertValues = "INSERT INTO UIDTestTable (AJSoftwareVersion, AppId, AppName, DateOfManufacture, DefaultLanguage, Description, DeviceId, DeviceName, HardwareVersion, Manufacturer, ModelNumber, SoftwareVersion, SupportUrl, SupportedLanguages, BusName, Status) VALUES ( '$xml->AJSoftwareVersion','$xml->AppId', '$xml->AppName', '$xml->DateOfManufacture', '$xml->DefaultLanguage', '$xml->Description', '$xml->DeviceId', '$xml->DeviceName', '$xml->HardwareVersion', '$xml->Manufacturer', '$xml->ModelNumber', '$xml->SoftwareVersion', '$xml->SupportUrl', '$xml->SupportedLanguages', '$xml->BusName', '$xml->Status' )";		
 
-		$updateValues = "UPDATE UIDTestTable SET BusName='$xml->BusName',Status='$xml->Status' WHERE DeviceName='My device name'";
+		$updateValues = "UPDATE UIDTestTable SET BusName='$xml->BusName',Status='$xml->Status' WHERE DeviceName='$xml->DeviceName'";
 
 		$conn = new mysqli("localhost","root","vedams");
 
