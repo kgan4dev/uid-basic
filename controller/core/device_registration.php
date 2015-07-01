@@ -44,7 +44,7 @@ switch ($method) {
 			
 //		$conn->query($insertValues);
 
-                $resp =  $conn->query("SELECT * FROM UIDTestTable WHERE DeviceName='My device name'");
+                $resp =  $conn->query("SELECT * FROM UIDTestTable WHERE DeviceName='$xml->DeviceName'");
 
                 $row = mysqli_fetch_assoc($resp);
 //                print_r($row);
